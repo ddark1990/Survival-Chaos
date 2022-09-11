@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8816b8efce08a7a44904d49d5a418a5c, type: 3}
+  m_Name: Race_Elf
+  m_EditorClassIdentifier: 
+  raceName: Elf
+  mainBase: {fileID: 8256015388654072432, guid: 072b8e191408a3d40a9546a4e721d046, type: 3}
+  barracks: {fileID: 3896453130784902104, guid: 7d68097e5c5bf8b4abb33f4355eb76d5, type: 3}
+  turret: {fileID: 8343120501117873961, guid: 2bb3a81e3df284d4f93ca3129b5a49d3, type: 3}

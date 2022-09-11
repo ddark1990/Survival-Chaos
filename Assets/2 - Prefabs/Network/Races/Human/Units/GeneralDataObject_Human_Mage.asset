@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4637df0f33cbe448beb612d22428a4f, type: 3}
+  m_Name: GeneralDataObject_Human_Mage
+  m_EditorClassIdentifier: 
+  objectName: Human Mage
+  startingHealth: 500
+  startingMana: 250
+  startingAttack: 26
+  startingDefense: 2
+  attackRate: 1
+  attackRange: 7
+  modelUIRender: {fileID: 2260206055841455729, guid: 8c670415ccd517345a7ff6c1e0f4288b, type: 3}

@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4637df0f33cbe448beb612d22428a4f, type: 3}
+  m_Name: GeneralDataObject_Orc_Archer
+  m_EditorClassIdentifier: 
+  objectName: Orc Archer
+  startingHealth: 450
+  startingMana: 250
+  startingAttack: 26
+  startingDefense: 2
+  attackRate: 1
+  attackRange: 7
+  modelUIRender: {fileID: 4094007426682286366, guid: 14e711d7af0ac2949b0c0ba5fc1fa64f, type: 3}

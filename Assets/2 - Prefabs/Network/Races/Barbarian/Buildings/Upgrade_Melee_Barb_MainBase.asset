@@ -1,0 +1,85 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ba7b19d71857694585cd7a61300574a, type: 3}
+  m_Name: Upgrade_Melee_Barb_MainBase
+  m_EditorClassIdentifier: 
+  upgrades:
+  - UpgradeName: Steel Weapons
+    Icon: {fileID: 21300000, guid: 1d728e45b75e6b541a6890e29d93a909, type: 3}
+    UpgradeTimer: 1
+    upgradeData:
+    - IdentifierType: 0
+      StatType: 0
+      UpgradeType: 0
+      StatValue: 4
+    - IdentifierType: 3
+      StatType: 0
+      UpgradeType: 0
+      StatValue: 6
+    prerequisiteData:
+      UpgradeLevel: 1
+  - UpgradeName: Thorium Weapons
+    Icon: {fileID: 21300000, guid: ad1838b7d05dc5745a4d9df7f85a70ad, type: 3}
+    UpgradeTimer: 1
+    upgradeData:
+    - IdentifierType: 0
+      StatType: 0
+      UpgradeType: 0
+      StatValue: 4
+    - IdentifierType: 3
+      StatType: 0
+      UpgradeType: 0
+      StatValue: 6
+    prerequisiteData:
+      UpgradeLevel: 1
+  - UpgradeName: Arcanite Weapons
+    Icon: {fileID: 21300000, guid: df3038b386823a543aa2eb8901c7623d, type: 3}
+    UpgradeTimer: 1
+    upgradeData:
+    - IdentifierType: 0
+      StatType: 0
+      UpgradeType: 0
+      StatValue: 4
+    - IdentifierType: 3
+      StatType: 0
+      UpgradeType: 0
+      StatValue: 6
+    prerequisiteData:
+      UpgradeLevel: 1
+  - UpgradeName: Dank Weapons
+    Icon: {fileID: 21300000, guid: 5082cdc5d5beab74d9b3a2718cb43d9b, type: 3}
+    UpgradeTimer: 1
+    upgradeData:
+    - IdentifierType: 0
+      StatType: 0
+      UpgradeType: 0
+      StatValue: 4
+    - IdentifierType: 3
+      StatType: 0
+      UpgradeType: 0
+      StatValue: 6
+    prerequisiteData:
+      UpgradeLevel: 1
+  - UpgradeName: Super Weapons
+    Icon: {fileID: 21300000, guid: 729ba1688d0a1c14ebd46acb9c3c03d5, type: 3}
+    UpgradeTimer: 1
+    upgradeData:
+    - IdentifierType: 0
+      StatType: 0
+      UpgradeType: 0
+      StatValue: 4
+    - IdentifierType: 3
+      StatType: 0
+      UpgradeType: 0
+      StatValue: 6
+    prerequisiteData:
+      UpgradeLevel: 2

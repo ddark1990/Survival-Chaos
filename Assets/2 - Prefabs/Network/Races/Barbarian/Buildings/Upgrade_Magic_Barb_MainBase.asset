@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ba7b19d71857694585cd7a61300574a, type: 3}
+  m_Name: Upgrade_Magic_Barb_MainBase
+  m_EditorClassIdentifier: 
+  upgrades:
+  - UpgradeName: Magic1
+    Icon: {fileID: 21300000, guid: 080483b667d766c4dbf3aa3825716724, type: 3}
+    UpgradeTimer: 1
+    upgradeData:
+    - IdentifierType: 2
+      StatType: 0
+      UpgradeType: 0
+      StatValue: 12
+    prerequisiteData:
+      UpgradeLevel: 1
+  - UpgradeName: Magic2
+    Icon: {fileID: 21300000, guid: dd3957bfb47ffab498364033495d7b5e, type: 3}
+    UpgradeTimer: 1
+    upgradeData:
+    - IdentifierType: 2
+      StatType: 0
+      UpgradeType: 0
+      StatValue: 12
+    prerequisiteData:
+      UpgradeLevel: 1
+  - UpgradeName: Magic3
+    Icon: {fileID: 21300000, guid: 7b4d50404280e1c418d64f6a5daa1b0b, type: 3}
+    UpgradeTimer: 1
+    upgradeData:
+    - IdentifierType: 2
+      StatType: 0
+      UpgradeType: 0
+      StatValue: 12
+    prerequisiteData:
+      UpgradeLevel: 1
+  - UpgradeName: Magic4
+    Icon: {fileID: 21300000, guid: 9570a121ac2a3ae48ae99b3179986d55, type: 3}
+    UpgradeTimer: 1
+    upgradeData:
+    - IdentifierType: 2
+      StatType: 0
+      UpgradeType: 0
+      StatValue: 12
+    prerequisiteData:
+      UpgradeLevel: 2

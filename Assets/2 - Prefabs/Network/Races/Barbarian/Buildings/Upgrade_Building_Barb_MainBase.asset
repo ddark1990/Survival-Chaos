@@ -1,0 +1,71 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ba7b19d71857694585cd7a61300574a, type: 3}
+  m_Name: Upgrade_Building_Barb_MainBase
+  m_EditorClassIdentifier: 
+  upgrades:
+  - UpgradeName: Walls 1
+    Icon: {fileID: 21300000, guid: 6410f32e12e7d8d448d474612e65bc75, type: 3}
+    UpgradeTimer: 1
+    upgradeData:
+    - IdentifierType: 6
+      StatType: 4
+      OperationType: 0
+      StatValue: 500
+    - IdentifierType: 6
+      StatType: 3
+      OperationType: 0
+      StatValue: 2
+    prerequisiteData:
+      UpgradeLevel: 1
+  - UpgradeName: Walls 2
+    Icon: {fileID: 21300000, guid: 8fe34357c980e8f408cc436f7deac2d3, type: 3}
+    UpgradeTimer: 1
+    upgradeData:
+    - IdentifierType: 6
+      StatType: 4
+      OperationType: 0
+      StatValue: 500
+    - IdentifierType: 6
+      StatType: 3
+      OperationType: 0
+      StatValue: 2
+    prerequisiteData:
+      UpgradeLevel: 1
+  - UpgradeName: Walls 3
+    Icon: {fileID: 21300000, guid: 3fee7428e59b63045bc21fddc215f838, type: 3}
+    UpgradeTimer: 1
+    upgradeData:
+    - IdentifierType: 6
+      StatType: 4
+      OperationType: 0
+      StatValue: 500
+    - IdentifierType: 6
+      StatType: 3
+      OperationType: 0
+      StatValue: 2
+    prerequisiteData:
+      UpgradeLevel: 1
+  - UpgradeName: Walls 4
+    Icon: {fileID: 21300000, guid: 89060c71f95cc6a4b8c3fea1f0dc3620, type: 3}
+    UpgradeTimer: 1
+    upgradeData:
+    - IdentifierType: 6
+      StatType: 4
+      OperationType: 0
+      StatValue: 500
+    - IdentifierType: 6
+      StatType: 3
+      OperationType: 0
+      StatValue: 2
+    prerequisiteData:
+      UpgradeLevel: 2
