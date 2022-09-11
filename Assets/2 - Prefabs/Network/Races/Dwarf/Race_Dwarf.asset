@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8816b8efce08a7a44904d49d5a418a5c, type: 3}
+  m_Name: Race_Dwarf
+  m_EditorClassIdentifier: 
+  raceName: Dwarf
+  mainBase: {fileID: 1346213696033995594, guid: af41d08780f20304c85a465467fcc450, type: 3}
+  barracks: {fileID: 1731466535084976146, guid: 90e110de98a5c434e84682ef9b239a93, type: 3}
+  turret: {fileID: 3192653869914381105, guid: 5a6915365e0832e4f89535f5c6964507, type: 3}

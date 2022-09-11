@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 209df130b4d6ea0439b01d61d615e037, type: 3}
+  m_Name: MainBaseDataObject_Barb
+  m_EditorClassIdentifier: 
+  objectName: Barbarian Hall
+  objectIcon: {fileID: 0}
+  statData:
+  - type: 0
+    value: 120
+  - type: 1
+    value: 1
+  - type: 2
+    value: 1
+  - type: 3
+    value: 2
+  - type: 4
+    value: 4500
+  - type: 5
+    value: 1
+  - type: 6
+    value: 200
+  - type: 7
+    value: 1
+  attackType: 3
+  defenseType: 2
+  description: Barb main.
+  modelUIRender: {fileID: 5559202092160164825, guid: d54a701d4f3cc834b91d4198702a6f66, type: 3}
+  identifierType: 6
+  statIcons: {fileID: 11400000, guid: 06e3b0cec538fcb478bd8a2532b98117, type: 2}

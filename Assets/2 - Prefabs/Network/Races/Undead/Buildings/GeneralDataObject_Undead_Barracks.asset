@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4637df0f33cbe448beb612d22428a4f, type: 3}
+  m_Name: GeneralDataObject_Undead_Barracks
+  m_EditorClassIdentifier: 
+  objectName: Undead Barracks
+  startingHealth: 2000
+  startingMana: 0
+  startingAttack: 110
+  startingDefense: 2
+  attackRate: 1
+  attackRange: 5
+  modelUIRender: {fileID: 6661051067814182871, guid: b6544d2bdc4467c4e9c7c4444225f4c2, type: 3}

@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8816b8efce08a7a44904d49d5a418a5c, type: 3}
+  m_Name: Race_Orc
+  m_EditorClassIdentifier: 
+  raceName: Orc
+  mainBase: {fileID: 3570320700646486083, guid: 170de607551ac4243909472ba26e19eb, type: 3}
+  barracks: {fileID: 5200173764902367661, guid: 70cfa67f2db627340bd34eac314bfa0a, type: 3}
+  turret: {fileID: 8526641935050545600, guid: c8f802046425c904da4b88aacac5fd77, type: 3}

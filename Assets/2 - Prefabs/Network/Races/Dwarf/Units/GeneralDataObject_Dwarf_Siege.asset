@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4637df0f33cbe448beb612d22428a4f, type: 3}
+  m_Name: GeneralDataObject_Dwarf_Siege
+  m_EditorClassIdentifier: 
+  objectName: Dwarf Cavalry
+  objectIcon: {fileID: 0}
+  startingHealth: 750
+  startingMana: 300
+  startingAttack: 45
+  attackType: 0
+  startingDefense: 4
+  defenseType: 0
+  attackRate: 1
+  attackRange: 1.4
+  description: A Dwarf Cavalry.
+  modelUIRender: {fileID: 8232936880735721074, guid: d711ccd17df9ef5449db9962519a0f6c, type: 3}
+  sendType: 0

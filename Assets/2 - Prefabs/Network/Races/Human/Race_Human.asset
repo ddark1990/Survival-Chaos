@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8816b8efce08a7a44904d49d5a418a5c, type: 3}
+  m_Name: Race_Human
+  m_EditorClassIdentifier: 
+  raceName: Human
+  mainBase: {fileID: 4647722076622644785, guid: b227b75dd71516e429c2470bdfd76200, type: 3}
+  barracks: {fileID: 7549042371216654986, guid: 664695b4340502d48aff77f34d1c7a9f, type: 3}
+  turret: {fileID: 1039856175840801702, guid: ff658d20ec57d71448f6fe21b08bae2a, type: 3}
