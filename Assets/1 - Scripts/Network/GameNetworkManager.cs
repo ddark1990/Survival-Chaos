@@ -22,14 +22,95 @@ namespace SurvivalChaos
         public static new GameNetworkManager singleton { get; private set; }
 
         private List<NetworkPlayer> networkPlayers = new List<NetworkPlayer>();
+        /// <summary>
+        /// Server side list only, clients will not see this.
+        /// </summary>
         public List<NetworkPlayer> NetworkPlayers => networkPlayers;
 
-        public void AddNetworkPlayer(NetworkPlayer player)
+        private void HandleOnClientConnected(NetworkPlayer player)
+        {
+            TrySetPlayerColor(player);
+
+            //var playerCount = SteamMatchmaking.GetNumLobbyMembers(new CSteamID(SteamLobby.CurrentLobbyID));
+            //print(playerCount);
+        }
+
+        private void TrySetPlayerColor(NetworkPlayer player)
+        {
+            var tempColor = Color.white;
+
+            for (int i = 0; i < networkPlayers.Count; i++)
+            {
+                switch (i)
+                {
+                    case 0:
+                        tempColor = Color.green;
+
+                        break;
+                    case 1:
+                        tempColor = Color.red;
+
+                        break;
+                    case 2:
+                        tempColor = Color.blue;
+
+                        break;
+                    case 3:
+                        tempColor = Color.magenta;
+
+                        break;
+                }
+            }
+
+            player.ServerSetPlayerColor(tempColor);
+        }
+
+        private void HandleOnClientDisconnected(NetworkPlayer player)
+        {
+            if (NetworkServer.active) Server_RemoveNetworkPlayer(player);
+        }
+
+        [Server]
+        public void Server_RemoveNetworkPlayer(NetworkPlayer player)
+        {
+            if (networkPlayers.Contains(player)) networkPlayers.Remove(player);
+        }
+
+        [Server]
+        public void Server_AddNetworkPlayer(NetworkPlayer player)
         {
             if(!networkPlayers.Contains(player))networkPlayers.Add(player);
         }
 
         #region Unity Callbacks
+
+        private void OnEnable()
+        {
+            NetworkPlayer.OnClientConnected += HandleOnClientConnected;
+            NetworkPlayer.OnClientDisconnected += HandleOnClientDisconnected;
+
+            NetworkClient.OnConnectedEvent += HandleOnConnectedEvent;
+            NetworkClient.OnDisconnectedEvent += HandleOnDisconnectedEvent;
+        }
+
+        private void OnDisable()
+        {
+            NetworkPlayer.OnClientConnected -= HandleOnClientConnected;
+            NetworkPlayer.OnClientDisconnected -= HandleOnClientDisconnected;
+
+            NetworkClient.OnConnectedEvent -= HandleOnConnectedEvent;
+            NetworkClient.OnDisconnectedEvent -= HandleOnDisconnectedEvent;
+        }
+
+        private void HandleOnDisconnectedEvent()
+        {
+            print("HandleOnDisconnectedEvent");
+        }
+
+        private void HandleOnConnectedEvent()
+        {
+            print("HandleOnConnectedEvent");
+        }
 
         public override void OnValidate()
         {
@@ -148,7 +229,7 @@ namespace SurvivalChaos
         /// <param name="conn">Connection from client.</param>
         public override void OnServerConnect(NetworkConnectionToClient conn) 
         {
-            
+
         }
 
         /// <summary>
@@ -201,38 +282,46 @@ namespace SurvivalChaos
         {
             base.OnClientConnect();
 
-            //print("-- Client Connected --");
+            print("-- Client Connected --");
 
-            CreateNetworkRoomPlayerMessage createRoomPlayerMessage = new CreateNetworkRoomPlayerMessage
+            CreateNetworkPlayerMessage createRoomPlayerMessage = new CreateNetworkPlayerMessage
             {
                 SteamId = SteamUser.GetSteamID().m_SteamID,
-                name = SteamFriends.GetPersonaName(),
-                isHost = NetworkServer.active && NetworkClient.isConnected ? true : false
+                Name = SteamFriends.GetPersonaName(),
+                IsHost = NetworkServer.active && NetworkClient.isConnected ? true : false
             };
 
             NetworkClient.connection.Send(createRoomPlayerMessage);
         }
 
-        private void OnCreateNetworkRoomPlayer(NetworkConnectionToClient conn, CreateNetworkRoomPlayerMessage message)
+        private void OnCreateNetworkPlayer(NetworkConnectionToClient conn, CreateNetworkPlayerMessage message)
         {
-            GameObject networkPlayerObject = Instantiate(playerPrefab);
+            var networkPlayerObject = Instantiate(playerPrefab);
 
+/*            if(!addedPlayer) //temp shitty fix
+            {
+                Destroy(networkPlayerObject);
+
+                return;
+            }
+*/
             var networkPlayer = networkPlayerObject.GetComponent<NetworkPlayer>();
 
-            // call this to use this gameobject as the primary controller
-            NetworkServer.AddPlayerForConnection(conn, networkPlayerObject);
+            Server_AddNetworkPlayer(networkPlayer); 
 
             //applies syncvar
             networkPlayer.ServerSetSteamId(message.SteamId);
-            networkPlayer.ServerSetPlayerName(message.name);
-            networkPlayer.ServerSetPlayerHost(message.isHost);
+            networkPlayer.ServerSetPlayerName(message.Name);
+            networkPlayer.ServerSetPlayerHost(message.IsHost);
+
+            var addedPlayer = NetworkServer.AddPlayerForConnection(conn, networkPlayerObject);
         }
 
-        public struct CreateNetworkRoomPlayerMessage : NetworkMessage
+        public struct CreateNetworkPlayerMessage : NetworkMessage
         {
             public ulong SteamId;
-            public string name;
-            public bool isHost;
+            public string Name;
+            public bool IsHost;
         }
 
         /// <summary>
@@ -254,7 +343,10 @@ namespace SurvivalChaos
         /// Called on client when transport raises an exception.</summary>
         /// </summary>
         /// <param name="exception">Exception thrown from the Transport.</param>
-        public override void OnClientError(Exception exception) { }
+        public override void OnClientError(Exception exception) 
+        {
+            print($"OnClientError | {exception.Message} | {exception.Source} => {exception.TargetSite}");
+        }
 
         #endregion
 
@@ -276,7 +368,7 @@ namespace SurvivalChaos
         /// </summary>
         public override void OnStartServer() 
         {
-            NetworkServer.RegisterHandler<CreateNetworkRoomPlayerMessage>(OnCreateNetworkRoomPlayer);
+            NetworkServer.RegisterHandler<CreateNetworkPlayerMessage>(OnCreateNetworkPlayer);
         }
 
         /// <summary>
@@ -294,13 +386,16 @@ namespace SurvivalChaos
         /// </summary>
         public override void OnStopServer() 
         {
-            NetworkServer.UnregisterHandler<CreateNetworkRoomPlayerMessage>();
+
         }
 
         /// <summary>
         /// This is called when a client is stopped.
         /// </summary>
-        public override void OnStopClient() { }
+        public override void OnStopClient() 
+        {
+            //NetworkServer.UnregisterHandler<CreateNetworkPlayerMessage>();
+        }
 
         #endregion
     }
