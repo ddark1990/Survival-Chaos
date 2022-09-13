@@ -16,7 +16,7 @@ namespace SurvivalChaos
         private string _lobbyName;
         private CSteamID _lobbyId;
 
-        public void SetLobbyData(CSteamID lobbyId, LobbyDataUpdate_t result)
+        public void InitializeLobbyItem(CSteamID lobbyId)
         {
             _lobbyName = SteamMatchmaking.GetLobbyData(lobbyId, "name");
 

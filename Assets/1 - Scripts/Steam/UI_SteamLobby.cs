@@ -12,6 +12,8 @@ namespace SurvivalChaos
     {
         public static UI_SteamLobby Instance;
 
+        [SerializeField] UI_LobbyPlayerItem[] lobbyPlayerItems;
+
         [SerializeField] GameObject lobbyListPanel;
         [SerializeField] GameObject lobbyItemPrefab;
         [SerializeField] RectTransform lobbyListContent;
@@ -30,16 +32,32 @@ namespace SurvivalChaos
         {
             NetworkPlayer.OnClientConnected += HandleOnClientConnected;
             NetworkPlayer.OnClientDisconnected += HandleOnClientDisconnected;
+            NetworkPlayer.OnHostClosedConnection += HandleOnHostClosedConnection;
         }
 
         private void OnDisable()
         {
             NetworkPlayer.OnClientConnected -= HandleOnClientConnected;
             NetworkPlayer.OnClientDisconnected -= HandleOnClientDisconnected;
+            NetworkPlayer.OnHostClosedConnection -= HandleOnHostClosedConnection;
+        }
+
+        private void HandleOnHostClosedConnection(NetworkPlayer player)
+        {
+            print("HandleOnHostClosedConnection");
         }
 
         private void HandleOnClientDisconnected(NetworkPlayer player)
         {
+            foreach (var item in lobbyPlayerItems) //finds first available lobby item
+            {
+                if (!item.IsOccupied || item.Player != player) continue;
+
+                item.ResetLobbyPlayerItem();
+
+                break;
+            }
+
             if (player.hasAuthority)
             {
                 OnLeftLobby?.Invoke();
@@ -62,54 +80,73 @@ namespace SurvivalChaos
         private IEnumerator HandlePlayerJoinLobby(NetworkPlayer player)
         {
             yield return new WaitUntil(() => player.netIdentity.GetComponent<NetworkPlayer>().SteamId != 0);
+            
+            foreach (var item in lobbyPlayerItems) //finds first available lobby item
+            {
+                if (item.IsOccupied) continue;
+
+                item.InitializeLobbyPlayerItem(player);
+
+                break;
+            }
 
             if (player.hasAuthority)
             {
                 OnEnteredLobby?.Invoke();
 
-                //print($"You joined the lobby!");
                 PopupManager.instance.ShowPopup($"Joined a lobby!");
             }
             else
             {
-                //print($"Player {player.PlayerName} joined the lobby!");
                 PopupManager.instance.ShowPopup($"{player.PlayerName} joined!");
             }
 
         }
 
-        public void OnLobbies_ButtonPress()
+        public void OnButtonPress_GetLobbies()
         {
             SteamLobby.Instance.GetLobbies();
         }
 
-        internal void PopulateSteamLobbies(List<CSteamID> lobbyIds, LobbyDataUpdate_t result)
+        public void OnButtonPress_LeaveLobby()
+        {
+            if (NetworkServer.active && NetworkClient.isConnected) //host
+            {
+                GameNetworkManager.singleton.StopHost();
+                print("Stopping Host...");
+            }
+            else
+            {
+                GameNetworkManager.singleton.StopClient();
+                
+                print("Stopping Client...");
+            }
+        }
+
+        internal void PopulateSteamLobbies(List<CSteamID> lobbyIds)
         {
             foreach (CSteamID lobbyId in lobbyIds)
             {
-                //print($"LobbyName :{SteamMatchmaking.GetLobbyData(lobbyId, "name")} | LobbyId: {lobbyId}");
-                //filter out lobbies that have no names nor a word "lobby" in it
-                if (SteamMatchmaking.GetLobbyData(lobbyId, "name") == string.Empty) continue;
+                //filter out lobbies that have no tag "my_game"
                 if (SteamMatchmaking.GetLobbyData(lobbyId, "my_game") == string.Empty) continue;
-                //if (!SteamMatchmaking.GetLobbyData(lobbyId, "name").Contains("lobby")) continue;
 
-                if (lobbyId.m_SteamID == result.m_ulSteamIDLobby)
-                {
-                    var lobbyItem = Instantiate(lobbyItemPrefab, lobbyListContent.transform);
-                    lobbyItem.GetComponent<UI_LobbyItem>().SetLobbyData(lobbyId, result);
+                var lobbyItem = Instantiate(lobbyItemPrefab, lobbyListContent.transform);
+                lobbyItem.GetComponent<UI_LobbyItem>().InitializeLobbyItem(lobbyId);
 
-                    if (!steamLobbyItems.Contains(lobbyItem.GetComponent<UI_LobbyItem>())) steamLobbyItems.Add(lobbyItem.GetComponent<UI_LobbyItem>());
-                }
+                if (!steamLobbyItems.Contains(lobbyItem.GetComponent<UI_LobbyItem>())) steamLobbyItems.Add(lobbyItem.GetComponent<UI_LobbyItem>());
             }
 
             //set content to top
             var halfDelta = lobbyListContent.sizeDelta / 2;
             lobbyListContent.localPosition = new Vector3(0, -halfDelta.y, 0);
             lobbyListContent.SetLeft(0);
+
+            //print("Populating Steam Lobbies..");
         }
 
-        internal void ClearAllSteamLobbies()
+        public void ClearAllSteamLobbies()
         {
+            //print("Clearing Steam Lobbies...");
             if (steamLobbyItems.Count == 0) return;
 
             foreach (var lobbyItem in steamLobbyItems)

@@ -20,6 +20,7 @@ namespace SurvivalChaos
 
         protected Callback<LobbyMatchList_t> lobbyList;
         protected Callback<LobbyDataUpdate_t> lobbyDataUpdated;
+        protected Callback<LobbyChatUpdate_t> lobbyChatUpdated;
 
         public List<CSteamID> lobbyIds = new List<CSteamID>();
 
@@ -27,6 +28,7 @@ namespace SurvivalChaos
 
         [SerializeField] int steamLobbyCountFilter = 60;
 
+        public static event Action OnLobbyCreateFailed;    
 
         private void Start()
         {
@@ -45,6 +47,12 @@ namespace SurvivalChaos
 
             lobbyList = Callback<LobbyMatchList_t>.Create(OnGetLobbyList);
             lobbyDataUpdated = Callback<LobbyDataUpdate_t>.Create(OnLobbyDataUpdated);
+            lobbyChatUpdated = Callback<LobbyChatUpdate_t>.Create(OnLobbyChatUpdated);
+        }
+
+        private void OnLobbyChatUpdated(LobbyChatUpdate_t param)
+        {
+
         }
 
         public void GetLobbies()
@@ -53,12 +61,6 @@ namespace SurvivalChaos
 
             SteamMatchmaking.AddRequestLobbyListResultCountFilter(steamLobbyCountFilter);
             SteamMatchmaking.RequestLobbyList();
-        }
-
-        private void OnLobbyDataUpdated(LobbyDataUpdate_t result)
-        {
-            if (UI_SteamLobby.Instance == null) return;
-            UI_SteamLobby.Instance.PopulateSteamLobbies(lobbyIds, result);
         }
 
         private void OnGetLobbyList(LobbyMatchList_t result)
@@ -72,31 +74,36 @@ namespace SurvivalChaos
                 lobbyIds.Add(lobbyId);
                 SteamMatchmaking.RequestLobbyData(lobbyId);
             }
+
+            UI_SteamLobby.Instance.PopulateSteamLobbies(lobbyIds);
         }
+
+        private void OnLobbyDataUpdated(LobbyDataUpdate_t result) { }
 
         //callback from SteamMatchmaking.CreateLobby
         private void OnLobbyCreated(LobbyCreated_t callback)
         {
             if (callback.m_eResult != EResult.k_EResultOK)
             {
-                //UI_Controller.Instance.ToggleMainCanvas(true);
-                //UI_Controller.Instance.hostButton.SetActive(true);
+                OnLobbyCreateFailed?.Invoke();
 
                 return;
             }
 
-            SteamMatchmaking.SetLobbyData(new CSteamID(callback.m_ulSteamIDLobby), "name", 
+            var lobbyId = new CSteamID(callback.m_ulSteamIDLobby);
+
+            SteamMatchmaking.SetLobbyData(lobbyId, "name", 
                 UI_MainMenu.Instance.GameName != string.Empty ? UI_MainMenu.Instance.GameName : SteamFriends.GetPersonaName() + "'s Lobby");
-            SteamMatchmaking.SetLobbyData(new CSteamID(callback.m_ulSteamIDLobby), HOST_ADRESS, SteamUser.GetSteamID().ToString());
-            SteamMatchmaking.SetLobbyData(new CSteamID(callback.m_ulSteamIDLobby), "game_started", "False");
-            SteamMatchmaking.SetLobbyData(new CSteamID(callback.m_ulSteamIDLobby), "my_game", "True");
+            SteamMatchmaking.SetLobbyData(lobbyId, HOST_ADRESS, SteamUser.GetSteamID().ToString());
+            SteamMatchmaking.SetLobbyData(lobbyId, "game_started", "False");
+            SteamMatchmaking.SetLobbyData(lobbyId, "my_game", "True");
 
             GameNetworkManager.singleton.StartHost();
         }
 
         private void OnLobbyEntered(LobbyEnter_t callback)
         {
-            //if (NetworkServer.active) return;
+            if (NetworkServer.active) return;
 
             var hostAdress = SteamMatchmaking.GetLobbyData(new CSteamID(callback.m_ulSteamIDLobby), HOST_ADRESS);
 
@@ -107,18 +114,12 @@ namespace SurvivalChaos
             CurrentLobbyID = callback.m_ulSteamIDLobby;
         }
 
-        private void OnLobbyKicked(LobbyKicked_t callback)
-        {
-            if (callback.m_ulSteamIDLobby != CurrentLobbyID) return;
+        private void OnLobbyKicked(LobbyKicked_t callback) { }
 
-
-
-        }
-
-        private void OnGameLobbyJoinRequested(GameLobbyJoinRequested_t callback)
-        {
+        private void OnGameLobbyJoinRequested(GameLobbyJoinRequested_t callback) { }
+        /*{
             SteamMatchmaking.JoinLobby(callback.m_steamIDLobby);
-        }
+        }*/
 
         public static Texture2D GetSteamImageAsTexture(int iImage)
         {

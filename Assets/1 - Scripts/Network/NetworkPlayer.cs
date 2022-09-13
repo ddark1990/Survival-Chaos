@@ -1,4 +1,5 @@
 using Mirror;
+using Steamworks;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -45,22 +46,9 @@ namespace SurvivalChaos
         public static event Action<bool> OnPlayerReadyUpdated;
         public static event Action<int> OnRaceIdStateUpdated;
         public static event Action<bool> OnLoadingSceneStateUpdated;
-
-        private void Start()
-        {
-            OnClientConnected?.Invoke(this);
-
-            GameNetworkManager.singleton.AddNetworkPlayer(this);
-        }
+        public static event Action<NetworkPlayer> OnHostClosedConnection;
 
         #region Server
-
-        public override void OnStartServer()
-        {
-            base.OnStartServer();
-
-            DontDestroyOnLoad(gameObject);
-        }
 
         [Server]
         public void ServerSetSteamId(ulong newId)
@@ -94,10 +82,9 @@ namespace SurvivalChaos
         {
             base.OnStartClient();
 
+            OnClientConnected?.Invoke(this);
+
             DontDestroyOnLoad(gameObject);
-
-            //print("OnStartClient");
-
         }
 
         public override void OnStopClient()
@@ -105,8 +92,19 @@ namespace SurvivalChaos
             base.OnStopClient();
 
             OnClientDisconnected?.Invoke(this);
+
+            if (!hasAuthority) return;
+
+            var lobbyId = new CSteamID(SteamLobby.CurrentLobbyID);
+
+            SteamMatchmaking.LeaveLobby(lobbyId);
         }
 
+        [ClientRpc]
+        public void RPC_OnHostConnectionClosedEvent()
+        {
+            OnHostClosedConnection?.Invoke(this);
+        }
         #endregion
 
         #region SyncVar Hooks
