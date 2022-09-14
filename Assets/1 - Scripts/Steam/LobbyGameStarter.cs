@@ -34,19 +34,22 @@ namespace SurvivalChaos
             Instance = this;
         }
 
+        private void OnDisable()
+        {
+            _startGameTimer = 0;
+            _gameStarted = false;
+            _gameStartedCanceled = false;
+        }
+
         [Command(requiresAuthority = false)]
         public void Cmd_StartGame()
         {
-            if (!GameNetworkManager.NetworkPlayer.IsHost) return;
-
             StartCoroutine(GameStartedTimerCountDown(5));
         }
 
         [Command(requiresAuthority = false)]
         public void Cmd_CancelStartGame()
         {
-            if (!GameNetworkManager.NetworkPlayer.IsHost) return;
-
             _gameStartedCanceled = true;
         }
 
