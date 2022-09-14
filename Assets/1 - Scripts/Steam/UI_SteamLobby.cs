@@ -14,20 +14,28 @@ namespace SurvivalChaos
     {
         public static UI_SteamLobby Instance;
 
+        [Header("Ref")]
         public Color[] PlayerColors;
         [SerializeField] UI_LobbyPlayerItem[] lobbyPlayerItems;
-
         [SerializeField] GameObject lobbyListPanel;
         [SerializeField] GameObject lobbyItemPrefab;
         [SerializeField] RectTransform lobbyListContent;
         [SerializeField] Button startGameButton;
+        [SerializeField] Button cancelStartGameButton;
         [SerializeField] Button leaveButton;
         [SerializeField] TextMeshProUGUI startTimerText;
 
-        List<UI_LobbyItem> steamLobbyItems = new List<UI_LobbyItem>();
-
+        [Header("Lobby Events")]
         public UnityEvent OnEnteredLobby;
         public UnityEvent OnLeftLobby;
+
+        [Header("Game Started Timer Events")]
+        public UnityEvent<string> OnGameStartedTimerStarted;
+        public UnityEvent<string> OnGameStartedTimerUpdated;
+        public UnityEvent OnGameStarted;
+        public UnityEvent<bool> OnGameStartedCancel;
+
+        List<UI_LobbyItem> steamLobbyItems = new List<UI_LobbyItem>();
 
         private void Awake()
         {
@@ -38,31 +46,29 @@ namespace SurvivalChaos
         {
             NetworkPlayer.OnClientConnected += HandleOnClientConnected;
             NetworkPlayer.OnClientDisconnected += HandleOnClientDisconnected;
-            NetworkPlayer.OnHostClosedConnection += HandleOnHostClosedConnection;
 
-            LobbyGameStarter.OnGameStartedTimerCountdown += HandleGameStartedTimer;
+            LobbyGameStarter.OnGameStartedTimerCountdownStarted += HandleGameStartedTimerStarted;
+            LobbyGameStarter.OnGameStartedTimerCountdown += HandleGameStartedTimerUpdated;
+            LobbyGameStarter.OnGameStartedCancel += HandleGameStartedCancel;
+            LobbyGameStarter.OnGameStarted += HandleGameStarted;
         }
 
         private void OnDisable()
         {
             NetworkPlayer.OnClientConnected -= HandleOnClientConnected;
             NetworkPlayer.OnClientDisconnected -= HandleOnClientDisconnected;
-            NetworkPlayer.OnHostClosedConnection -= HandleOnHostClosedConnection;
 
-            LobbyGameStarter.OnGameStartedTimerCountdown -= HandleGameStartedTimer;
+            LobbyGameStarter.OnGameStartedTimerCountdownStarted -= HandleGameStartedTimerStarted;
+            LobbyGameStarter.OnGameStartedTimerCountdown -= HandleGameStartedTimerUpdated;
+            LobbyGameStarter.OnGameStartedCancel -= HandleGameStartedCancel;
+            LobbyGameStarter.OnGameStarted -= HandleGameStarted;
         }
 
-        private void HandleGameStartedTimer(int timer)
+        private void HandleOnClientConnected(NetworkPlayer player)
         {
-            UpdateStartTimerText(timer);
+            StartCoroutine(HandlePlayerJoinLobby(player));
         }
 
-        //doesnt work
-        private void HandleOnHostClosedConnection(NetworkPlayer player)
-        {
-            print("HandleOnHostClosedConnection");
-        }
-        
         private void HandleOnClientDisconnected(NetworkPlayer player)
         {
             foreach (var item in lobbyPlayerItems) //finds first available lobby item
@@ -88,15 +94,37 @@ namespace SurvivalChaos
             }
         }
 
-        private void HandleOnClientConnected(NetworkPlayer player)
+        private void HandleGameStartedTimerStarted(int startedTime)
         {
-            StartCoroutine(HandlePlayerJoinLobby(player));
+            OnGameStartedTimerStarted?.Invoke(startedTime.ToString());
+        }
+
+        private void HandleGameStartedTimerUpdated(int timer)
+        {
+            if (timer < 1) return;
+
+            OnGameStartedTimerUpdated?.Invoke(timer.ToString());
+
+            UI_UpdateStartTimerText(timer);
+        }
+
+        private void HandleGameStartedCancel(bool state)
+        {
+            if (state) OnGameStartedCancel?.Invoke(state);
+            print($"HandleGameStartedCancel | {state}");
+        }
+
+        private void HandleGameStarted()
+        {
+            OnGameStarted?.Invoke();
         }
 
         private IEnumerator HandlePlayerJoinLobby(NetworkPlayer player)
         {
+            ResetButtons();
+
             yield return new WaitUntil(() => player.netIdentity.GetComponent<NetworkPlayer>().SteamId != 0);
-            
+
             foreach (var item in lobbyPlayerItems) //finds first available lobby item
             {
                 if (item.IsOccupied) continue;
@@ -122,15 +150,13 @@ namespace SurvivalChaos
             //startGameButton.interactable = NetworkServer.connections.Count > 1;
         }
 
-        public void UpdateStartTimerText(int timer)
+        public void UI_UpdateStartTimerText(int timer)
         {
-            if (!startTimerText.gameObject.activeInHierarchy) startTimerText.gameObject.SetActive(true);
-
-            if (timer < 3) leaveButton.interactable = false;
-
-            if (timer > -1) startTimerText.text = timer.ToString();
-
-            if (!NetworkClient.active) startTimerText.gameObject.SetActive(false); //TODO: disable when not counting down
+            if (timer < 3 && !LobbyGameStarter.Instance.GameStartedCanceled)
+            {
+                cancelStartGameButton.interactable = false;
+                leaveButton.interactable = false;
+            }
         }
 
         private void EnableHostOptions()
@@ -138,29 +164,10 @@ namespace SurvivalChaos
             startGameButton.gameObject.SetActive(true);
         }
 
-        public void OnButtonPress_StartGame()
+        private void ResetButtons()
         {
-            LobbyGameStarter.Instance.Cmd_StartGame();
-        }
-
-        public void OnButtonPress_GetLobbies()
-        {
-            SteamLobby.Instance.GetLobbies();
-        }
-
-        public void OnButtonPress_LeaveLobby()
-        {
-            if (NetworkServer.active && NetworkClient.isConnected) //host
-            {
-                GameNetworkManager.singleton.StopHost();
-                print("Stopping Host...");
-            }
-            else
-            {
-                GameNetworkManager.singleton.StopClient();
-                
-                print("Stopping Client...");
-            }
+            cancelStartGameButton.interactable = true;
+            leaveButton.interactable = true;
         }
 
         internal void PopulateSteamLobbies(List<CSteamID> lobbyIds)
@@ -194,6 +201,38 @@ namespace SurvivalChaos
                 Destroy(lobbyItem.gameObject);
             }
             steamLobbyItems.Clear();
+        }
+
+        public void OnButtonPress_StartGame()
+        {
+            LobbyGameStarter.Instance.Cmd_StartGame();
+        }
+
+        public void OnButtonPress_GetLobbies()
+        {
+            SteamLobby.Instance.GetLobbies();
+        }
+
+        public void OnButtonPress_CancelGameStart()
+        {
+            LobbyGameStarter.Instance.Cmd_CancelStartGame();
+        }
+
+        public void OnButtonPress_LeaveLobby()
+        {
+            if (NetworkServer.active && NetworkClient.isConnected) //host
+            {
+                if (LobbyGameStarter.Instance.StartGameTimer > 0) LobbyGameStarter.Instance.Cmd_CancelStartGame();
+
+                GameNetworkManager.singleton.StopHost();
+                print("Stopping Host...");
+            }
+            else
+            {
+                GameNetworkManager.singleton.StopClient();
+
+                print("Stopping Client...");
+            }
         }
     }
 
