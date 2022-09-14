@@ -23,6 +23,8 @@ namespace SurvivalChaos
         public UnityEvent OnEnteredLobby;
         public UnityEvent OnLeftLobby;
 
+        public Color[] playerColors;
+
         private void Awake()
         {
             Instance = this;

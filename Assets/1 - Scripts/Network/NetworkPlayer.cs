@@ -93,6 +93,8 @@ namespace SurvivalChaos
 
             OnClientDisconnected?.Invoke(this);
 
+            if (!NetworkServer.active) NetworkClient.OnTransportDisconnected();
+
             if (!hasAuthority) return;
 
             var lobbyId = new CSteamID(SteamLobby.CurrentLobbyID);
