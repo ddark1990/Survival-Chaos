@@ -15,7 +15,7 @@ namespace SurvivalChaos
     public class GameNetworkManager : NetworkManager
     {
         //how to get a local player
-        //var player = NetworkClient.connection.identity.GetComponent<NetworkPlayer>();
+        public NetworkPlayer NetworkPlayer => NetworkClient.connection.identity.GetComponent<NetworkPlayer>();
 
         // Overrides the base singleton so we don't
         // have to cast to this type everywhere.
@@ -44,19 +44,19 @@ namespace SurvivalChaos
                 switch (i)
                 {
                     case 0:
-                        tempColor = Color.green;
+                        tempColor = UI_SteamLobby.Instance.playerColors[0];
 
                         break;
                     case 1:
-                        tempColor = Color.red;
+                        tempColor = UI_SteamLobby.Instance.playerColors[1];
 
                         break;
                     case 2:
-                        tempColor = Color.blue;
+                        tempColor = UI_SteamLobby.Instance.playerColors[2];
 
                         break;
                     case 3:
-                        tempColor = Color.magenta;
+                        tempColor = UI_SteamLobby.Instance.playerColors[3];
 
                         break;
                 }
@@ -88,28 +88,12 @@ namespace SurvivalChaos
         {
             NetworkPlayer.OnClientConnected += HandleOnClientConnected;
             NetworkPlayer.OnClientDisconnected += HandleOnClientDisconnected;
-
-            NetworkClient.OnConnectedEvent += HandleOnConnectedEvent;
-            NetworkClient.OnDisconnectedEvent += HandleOnDisconnectedEvent;
         }
 
         private void OnDisable()
         {
             NetworkPlayer.OnClientConnected -= HandleOnClientConnected;
             NetworkPlayer.OnClientDisconnected -= HandleOnClientDisconnected;
-
-            NetworkClient.OnConnectedEvent -= HandleOnConnectedEvent;
-            NetworkClient.OnDisconnectedEvent -= HandleOnDisconnectedEvent;
-        }
-
-        private void HandleOnDisconnectedEvent()
-        {
-            print("HandleOnDisconnectedEvent");
-        }
-
-        private void HandleOnConnectedEvent()
-        {
-            print("HandleOnConnectedEvent");
         }
 
         public override void OnValidate()
@@ -298,13 +282,8 @@ namespace SurvivalChaos
         {
             var networkPlayerObject = Instantiate(playerPrefab);
 
-/*            if(!addedPlayer) //temp shitty fix
-            {
-                Destroy(networkPlayerObject);
+            NetworkServer.AddPlayerForConnection(conn, networkPlayerObject);
 
-                return;
-            }
-*/
             var networkPlayer = networkPlayerObject.GetComponent<NetworkPlayer>();
 
             Server_AddNetworkPlayer(networkPlayer); 
@@ -313,8 +292,6 @@ namespace SurvivalChaos
             networkPlayer.ServerSetSteamId(message.SteamId);
             networkPlayer.ServerSetPlayerName(message.Name);
             networkPlayer.ServerSetPlayerHost(message.IsHost);
-
-            var addedPlayer = NetworkServer.AddPlayerForConnection(conn, networkPlayerObject);
         }
 
         public struct CreateNetworkPlayerMessage : NetworkMessage
@@ -386,7 +363,7 @@ namespace SurvivalChaos
         /// </summary>
         public override void OnStopServer() 
         {
-
+            NetworkServer.UnregisterHandler<CreateNetworkPlayerMessage>();
         }
 
         /// <summary>
@@ -394,7 +371,7 @@ namespace SurvivalChaos
         /// </summary>
         public override void OnStopClient() 
         {
-            //NetworkServer.UnregisterHandler<CreateNetworkPlayerMessage>();
+
         }
 
         #endregion

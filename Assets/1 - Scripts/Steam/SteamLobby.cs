@@ -103,8 +103,6 @@ namespace SurvivalChaos
 
         private void OnLobbyEntered(LobbyEnter_t callback)
         {
-            if (NetworkServer.active) return;
-
             var hostAdress = SteamMatchmaking.GetLobbyData(new CSteamID(callback.m_ulSteamIDLobby), HOST_ADRESS);
 
             GameNetworkManager.singleton.networkAddress = hostAdress;
