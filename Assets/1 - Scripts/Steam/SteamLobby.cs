@@ -95,7 +95,7 @@ namespace SurvivalChaos
             SteamMatchmaking.SetLobbyData(lobbyId, "name", 
                 UI_MainMenu.Instance.GameName != string.Empty ? UI_MainMenu.Instance.GameName : SteamFriends.GetPersonaName() + "'s Lobby");
             SteamMatchmaking.SetLobbyData(lobbyId, HOST_ADRESS, SteamUser.GetSteamID().ToString());
-            SteamMatchmaking.SetLobbyData(lobbyId, "game_started", "False");
+            //SteamMatchmaking.SetLobbyData(lobbyId, "game_started", "False");
             SteamMatchmaking.SetLobbyData(lobbyId, "my_game", "True");
 
             GameNetworkManager.singleton.StartHost();
