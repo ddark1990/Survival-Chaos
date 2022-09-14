@@ -111,7 +111,7 @@ namespace SurvivalChaos
         private void HandleGameStartedCancel(bool state)
         {
             if (state) OnGameStartedCancel?.Invoke(state);
-            print($"HandleGameStartedCancel | {state}");
+            //print($"HandleGameStartedCancel | {state}");
         }
 
         private void HandleGameStarted()
@@ -121,8 +121,6 @@ namespace SurvivalChaos
 
         private IEnumerator HandlePlayerJoinLobby(NetworkPlayer player)
         {
-            ResetButtons();
-
             yield return new WaitUntil(() => player.netIdentity.GetComponent<NetworkPlayer>().SteamId != 0);
 
             foreach (var item in lobbyPlayerItems) //finds first available lobby item
@@ -138,7 +136,7 @@ namespace SurvivalChaos
             {
                 OnEnteredLobby?.Invoke();
 
-                if (player.IsHost) EnableHostOptions();
+                if (player.IsHost) ToggleHostOptions(true);
 
                 PopupManager.instance.ShowPopup($"Joined a lobby!");
             }
@@ -159,9 +157,12 @@ namespace SurvivalChaos
             }
         }
 
-        private void EnableHostOptions()
+        private void ToggleHostOptions(bool toggle)
         {
-            startGameButton.gameObject.SetActive(true);
+            ResetButtons();
+
+            startGameButton.gameObject.SetActive(toggle);
+            cancelStartGameButton.gameObject.SetActive(toggle);
         }
 
         private void ResetButtons()
@@ -205,6 +206,8 @@ namespace SurvivalChaos
 
         public void OnButtonPress_StartGame()
         {
+            if (!GameNetworkManager.NetworkPlayer.IsHost) return;
+
             LobbyGameStarter.Instance.Cmd_StartGame();
         }
 
@@ -215,6 +218,8 @@ namespace SurvivalChaos
 
         public void OnButtonPress_CancelGameStart()
         {
+            if (!GameNetworkManager.NetworkPlayer.IsHost) return;
+
             LobbyGameStarter.Instance.Cmd_CancelStartGame();
         }
 
