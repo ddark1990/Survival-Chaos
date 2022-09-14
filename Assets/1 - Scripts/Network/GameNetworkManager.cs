@@ -16,7 +16,7 @@ namespace SurvivalChaos
     public class GameNetworkManager : NetworkManager
     {
         //how to get a local player: var player = NetworkClient.connection.identity.GetComponent<NetworkPlayer>();
-        public NetworkPlayer NetworkPlayer => NetworkClient.connection.identity.GetComponent<NetworkPlayer>();
+        public static NetworkPlayer NetworkPlayer => NetworkClient.connection.identity.GetComponent<NetworkPlayer>();
 
         // Overrides the base singleton so we don't
         // have to cast to this type everywhere.

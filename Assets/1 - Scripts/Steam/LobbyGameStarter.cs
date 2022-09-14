@@ -6,19 +6,28 @@ using UnityEngine;
 
 namespace SurvivalChaos
 {
+    //might need to be owned by host player, maybe?
     public class LobbyGameStarter : NetworkBehaviour
     {
         public static LobbyGameStarter Instance;
 
         [SyncVar(hook = nameof(HandleStartGameTimerUpdated))]
         int _startGameTimer;
+        public int StartGameTimer => _startGameTimer;
 
         [SyncVar(hook = nameof(HandleGameStarted))]
         bool _gameStarted;
 
+        [SyncVar(hook = nameof(HandleGameStartedCanceled))]
+        bool _gameStartedCanceled;
+        public bool GameStartedCanceled => _gameStartedCanceled;
+
         WaitForSeconds _waitForSecond = new WaitForSeconds(1);
 
+        public static event Action<int> OnGameStartedTimerCountdownStarted; //holds startedTime as ref
         public static event Action<int> OnGameStartedTimerCountdown;
+        public static event Action OnGameStarted;
+        public static event Action<bool> OnGameStartedCancel;
 
         private void Awake()
         {
@@ -26,18 +35,33 @@ namespace SurvivalChaos
         }
 
         [Command(requiresAuthority = false)]
-        public void Cmd_StartGame() //TODO: fix button interactability when starting game
+        public void Cmd_StartGame()
         {
-            StartCoroutine(GameStartedTimerCountDown(6));
+            if (!GameNetworkManager.NetworkPlayer.IsHost) return;
+
+            StartCoroutine(GameStartedTimerCountDown(5));
+        }
+
+        [Command(requiresAuthority = false)]
+        public void Cmd_CancelStartGame()
+        {
+            if (!GameNetworkManager.NetworkPlayer.IsHost) return;
+
+            _gameStartedCanceled = true;
         }
 
         private IEnumerator GameStartedTimerCountDown(int timerLength)
         {
             _startGameTimer = timerLength;
 
-            while (_startGameTimer > -1)
+            while (_startGameTimer > 0)
             {
-                if (!NetworkClient.active) yield break;
+                if (!NetworkClient.active || _gameStartedCanceled)
+                {
+                    _gameStartedCanceled = false;
+
+                    yield break;
+                }
 
                 yield return _waitForSecond;
                 _startGameTimer--;
@@ -51,11 +75,18 @@ namespace SurvivalChaos
 
         private void HandleGameStarted(bool oldState, bool newState)
         {
+            OnGameStarted?.Invoke();
+        }
 
+        private void HandleGameStartedCanceled(bool oldState, bool newState)
+        {
+            OnGameStartedCancel?.Invoke(newState);
         }
 
         private void HandleStartGameTimerUpdated(int oldTime, int newTime)
         {
+            if (newTime > 4) OnGameStartedTimerCountdownStarted?.Invoke(newTime);
+
             OnGameStartedTimerCountdown?.Invoke(newTime);
         }
     }
