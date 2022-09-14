@@ -4,6 +4,7 @@ using UnityEngine.SceneManagement;
 using Mirror;
 using Steamworks;
 using System.Collections.Generic;
+using System.Collections;
 
 /*
 	Documentation: https://mirror-networking.gitbook.io/docs/components/network-manager
@@ -14,7 +15,7 @@ namespace SurvivalChaos
 {
     public class GameNetworkManager : NetworkManager
     {
-        //how to get a local player
+        //how to get a local player: var player = NetworkClient.connection.identity.GetComponent<NetworkPlayer>();
         public NetworkPlayer NetworkPlayer => NetworkClient.connection.identity.GetComponent<NetworkPlayer>();
 
         // Overrides the base singleton so we don't
@@ -44,19 +45,19 @@ namespace SurvivalChaos
                 switch (i)
                 {
                     case 0:
-                        tempColor = UI_SteamLobby.Instance.playerColors[0];
+                        tempColor = UI_SteamLobby.Instance.PlayerColors[0];
 
                         break;
                     case 1:
-                        tempColor = UI_SteamLobby.Instance.playerColors[1];
+                        tempColor = UI_SteamLobby.Instance.PlayerColors[1];
 
                         break;
                     case 2:
-                        tempColor = UI_SteamLobby.Instance.playerColors[2];
+                        tempColor = UI_SteamLobby.Instance.PlayerColors[2];
 
                         break;
                     case 3:
-                        tempColor = UI_SteamLobby.Instance.playerColors[3];
+                        tempColor = UI_SteamLobby.Instance.PlayerColors[3];
 
                         break;
                 }
